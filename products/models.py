@@ -17,7 +17,7 @@ class Product(TimeStampModel):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="products")
     stock_count = models.PositiveIntegerField()
-    slug = models.SlugField(blank=True, max_length=50)
+    slug = models.SlugField(blank=True, max_length=50, unique=True)
     popularity = models.PositiveIntegerField(default=0, help_text="Incrementation when user sees details page.")
     rank = models.FloatField(default=0, help_text="Ranked by users.")
     sales_count = models.PositiveIntegerField(default=0)
@@ -30,4 +30,4 @@ class Product(TimeStampModel):
         if not self.slug:
             self.slug = slugify(self.name)
 
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)

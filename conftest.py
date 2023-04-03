@@ -1,15 +1,17 @@
 import pytest
 import faker_commerce
+import factory
 from faker import Faker
 from products.models import Product
+from pytest_factoryboy import register
 
 fake = Faker("pl_PL")
 fake.add_provider(faker_commerce.Provider)
 
 
 @pytest.fixture
-def product():
-    """Fixture for create product without saving to database
+def product_onion():
+    """Fixture for create product_onion without saving to database
     :return: Object of class Product representing a row in table
     :rtype: Product
 
@@ -26,16 +28,16 @@ def product():
 
 
 @pytest.fixture
-def product_db(product, db):
-    """Fixture for create product
-    :param product:
+def product_db(product_onion, db):
+    """Fixture for create product_onion
+    :param product_onion:
     :param db: DB  fixture adds database handling
     :return: Object of class Product representing a row in table
     :rtype: Product
 
     """
-    product.save()
-    return product
+    product_onion.save()
+    return product_onion
 
 
 @pytest.fixture
@@ -43,3 +45,21 @@ def api_rf():
     from rest_framework.test import APIRequestFactory
 
     return APIRequestFactory()
+
+
+@register
+class ProductFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "products.Product"
+
+    name = factory.Faker("sentence", locale="de_DE")
+    description = factory.Faker("paragraph")
+    price = factory.Faker("pydecimal", left_digits=2, right_digits=2, positive=True, min_value=10, max_value=34)
+    image = factory.Faker("image_url")
+    stock_count = factory.Faker("pyint", min_value=1, max_value=50)
+    barcode = factory.Faker("ean13")
+
+
+@pytest.fixture
+def products_batch(db):
+    return ProductFactory.create_batch(60)

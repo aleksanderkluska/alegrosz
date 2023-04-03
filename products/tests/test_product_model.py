@@ -5,19 +5,19 @@ from conftest import fake
 from products.models import Product
 
 
-def test_correct_gui_representation(product):
-    name = product.name
+def test_correct_gui_representation(product_onion):
+    name = product_onion.name
 
-    assert str(product) == name
+    assert str(product_onion) == name
 
 
 def test_auto_slug(product_db):
     assert product_db.slug == "polish-onion"
 
 
-def test_custom_slug(product, db):
-    product.slug = "test-custom-slug"
-    product.save()
+def test_custom_slug(product_onion, db):
+    product_onion.slug = "test-custom-slug"
+    product_onion.save()
     product_db = Product.objects.first()
     assert product_db.slug == "test-custom-slug"
 
